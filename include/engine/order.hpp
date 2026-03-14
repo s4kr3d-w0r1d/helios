@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <map>
 #include <list>
+#include <unordered_map>
 
 namespace hft {
 
@@ -33,12 +34,15 @@ namespace hft {
             std::map<u32, std::list<Order>, std::greater<u32>> bids;
             std::map<u32, std::list<Order>, std::less<u32>> asks;
 
+            // lookup Table: maps Order ID -> location in the list
+            std::unordered_map<u64, std::list<Order>::iterator> order_index;
+
         public:
             OrderBook() = default;
             ~OrderBook() = default;
 
             void add_order(const Order& order) {
-                // TODO : implement matching and resting logic
+                // TODO : implement matching and resting and cancellation logic
             }
     };
 }
