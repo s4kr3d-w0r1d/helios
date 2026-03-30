@@ -27,5 +27,27 @@ namespace utils {
         return true;
     }
 
+    bool set_realtime_priority(std::thread& t) {
+        sched_param sch;
+        int policy;
+        pthread_t raw_thread = t.native_handle();
+
+        // Get the current scheduling parameters
+        pthread_getschedparam(raw_thread, &policy, &sch);
+        
+        // Set to maximum possible priority for FIFO real-time tasks
+        sch.sched_priority = sched_get_priority_max(SCHED_FIFO);
+
+        // Apply the Real-Time policy to the Linux Kernel
+        int rc = pthread_setschedparam(raw_thread, SCHED_FIFO, &sch);
+        if (rc != 0) {
+            std::cerr << "[WARNING] Failed to set SCHED_FIFO real-time priority. "
+                      << "(Note: This usually requires running the executable with 'sudo'). "
+                      << "OS returned code: " << rc << "\n";
+            return false;
+        }
+        return true;
+    }
+
 } // namespace utils
 } // namespace hft
